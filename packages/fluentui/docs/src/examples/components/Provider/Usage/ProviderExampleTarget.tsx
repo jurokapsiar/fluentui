@@ -1,6 +1,7 @@
+// http://localhost:8080/maximize/provider-example-target/false
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Attachment, Button, Provider, teamsTheme } from '@fluentui/react-northstar';
+import { Button, Provider, teamsTheme } from '@fluentui/react-northstar';
 
 type PortalWindowProps = {
   children: (externalDocument: Document) => React.ReactElement;
@@ -19,8 +20,12 @@ const PortalWindow: React.FunctionComponent<PortalWindowProps> = ({ children, on
 
     externalWindow.current.document.body.appendChild(externalContainer.current);
     if (onClose) externalWindow.current.onbeforeunload = onClose;
+    externalWindow.current.document.title = 'New chat window';
 
     setMounted(true);
+    setTimeout(() => {
+      externalWindow.current.document.title = 'Chat - Robin Hood';
+    }, 3000);
 
     return () => {
       externalWindow.current.close();
@@ -41,7 +46,7 @@ const ProviderExampleTarget = () => {
         <PortalWindow onClose={handleClose}>
           {externalDocument => (
             <Provider theme={teamsTheme} target={externalDocument}>
-              <Attachment header="Document.docx" />
+              <Button autoFocus content="Start chat" />
             </Provider>
           )}
         </PortalWindow>
