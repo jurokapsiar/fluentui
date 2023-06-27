@@ -111,7 +111,7 @@ export const useComboboxBaseState = (
 
   let filterFn: (option: OptionValue) => boolean = () => true;
   if (filter === true) {
-    filterFn = (option: OptionValue) => option.text.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+    filterFn = (option: OptionValue) => (value ? option.text.toLowerCase().indexOf(value.toLowerCase()) !== -1 : true);
   } else if (filter !== false) {
     filterFn = filter;
   }

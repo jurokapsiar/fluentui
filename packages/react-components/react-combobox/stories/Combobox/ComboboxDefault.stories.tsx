@@ -20,7 +20,8 @@ export const Default = (props: Partial<ComboboxProps>) => {
   return (
     <div className={styles.root}>
       <label id={comboId}>Best pet</label>
-      <Combobox aria-labelledby={comboId} placeholder="Select an animal" {...props}>
+      {/* TODO: you should make your own story */}
+      <Combobox filter aria-labelledby={comboId} placeholder="Select an animal" {...props}>
         {options.map(option => (
           <Option key={option} disabled={option === 'Ferret'}>
             {option}

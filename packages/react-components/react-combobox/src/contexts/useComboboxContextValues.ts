@@ -12,6 +12,7 @@ export function useComboboxContextValues(state: ComboboxBaseState): ComboboxBase
     setActiveOption,
     setOpen,
     size,
+    filter,
   } = state;
 
   const combobox = {
@@ -25,6 +26,7 @@ export function useComboboxContextValues(state: ComboboxBaseState): ComboboxBase
     setActiveOption,
     setOpen,
     size,
+    filter,
   };
 
   return { combobox };
