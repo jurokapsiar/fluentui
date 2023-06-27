@@ -19,6 +19,7 @@ export const useComboboxBaseState = (
     multiselect,
     onOpenChange,
     size = 'medium',
+    filter = () => true,
   } = props;
 
   const optionCollection = useOptionCollection();
@@ -108,6 +109,13 @@ export const useComboboxBaseState = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, children]);
 
+  let filterFn: (option: OptionValue) => boolean = () => true;
+  if (filter === true) {
+    filterFn = (option: OptionValue) => option.text.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+  } else if (filter !== false) {
+    filterFn = filter;
+  }
+
   return {
     ...optionCollection,
     ...selectionState,
@@ -115,6 +123,7 @@ export const useComboboxBaseState = (
     appearance,
     focusVisible,
     hasFocus,
+    filter: filterFn,
     ignoreNextBlur,
     inlinePopup,
     open,

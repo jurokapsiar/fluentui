@@ -65,6 +65,11 @@ export type ComboboxBaseProps = SelectionProps & {
    * Use this with `onOptionSelect` to directly control the displayed value string
    */
   value?: string;
+
+  /**
+   * Filter callback, use `true` for default filter.
+   */
+  filter?: boolean | ((option?: OptionValue) => boolean);
 };
 
 /**
@@ -82,6 +87,8 @@ export type ComboboxBaseState = Required<Pick<ComboboxBaseProps, 'appearance' | 
 
     // whether the combobox/dropdown currently has focus
     hasFocus: boolean;
+
+    filter(option?: OptionValue): boolean;
 
     /* Whether the next blur event should be ignored, and the combobox/dropdown will not close.*/
     ignoreNextBlur: React.MutableRefObject<boolean>;
