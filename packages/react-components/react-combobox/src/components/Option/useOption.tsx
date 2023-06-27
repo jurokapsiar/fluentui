@@ -67,6 +67,7 @@ export const useOption_unstable = (props: OptionProps, ref: React.Ref<HTMLElemen
   const selectOption = useContextSelector(ListboxContext, ctx => ctx.selectOption);
   const setActiveOption = useContextSelector(ListboxContext, ctx => ctx.setActiveOption);
   const setOpen = useContextSelector(ComboboxContext, ctx => ctx.setOpen);
+  const filter = useContextSelector(ComboboxContext, ctx => ctx.filter);
 
   // current active option?
   const active = useContextSelector(ListboxContext, ctx => {
@@ -110,6 +111,8 @@ export const useOption_unstable = (props: OptionProps, ref: React.Ref<HTMLElemen
     ? { role: 'menuitemcheckbox', 'aria-checked': selected }
     : { role: 'option', 'aria-selected': selected };
 
+  const isVisible = filter ? filter(optionData) : true;
+
   return {
     components: {
       root: 'div',
@@ -135,5 +138,6 @@ export const useOption_unstable = (props: OptionProps, ref: React.Ref<HTMLElemen
     focusVisible,
     multiselect,
     selected,
+    isVisible,
   };
 };

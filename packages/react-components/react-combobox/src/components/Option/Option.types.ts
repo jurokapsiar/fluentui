@@ -63,4 +63,6 @@ export type OptionState = ComponentState<OptionSlots> &
 
     /* If true, the option is selected */
     selected: boolean;
+
+    isVisible: boolean;
   };

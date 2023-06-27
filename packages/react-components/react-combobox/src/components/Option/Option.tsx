@@ -16,7 +16,7 @@ export const Option: ForwardRefComponent<OptionProps> = React.forwardRef((props,
 
   useCustomStyleHook_unstable('useOptionStyles_unstable')(state);
 
-  return renderOption_unstable(state);
+  return state.isVisible ? renderOption_unstable(state) : null;
 });
 
 Option.displayName = 'Option';
