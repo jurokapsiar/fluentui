@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { TagPickerListProps, TagPickerListState } from './TagPickerList.types';
 import { Listbox } from '@fluentui/react-combobox';
 import { useTagPickerContext_unstable } from '../../contexts/TagPickerContext';
-import { useMergedRefs } from '@fluentui/react-utilities';
+import { slot, useMergedRefs } from '@fluentui/react-utilities';
 import { useListboxSlot } from '@fluentui/react-combobox';
 
 /**
@@ -18,7 +18,6 @@ export const useTagPickerList_unstable = (
   props: TagPickerListProps,
   ref: React.Ref<HTMLDivElement>,
 ): TagPickerListState => {
-  const multiselect = useTagPickerContext_unstable(ctx => ctx.multiselect);
   const triggerRef = useTagPickerContext_unstable(ctx => ctx.triggerRef) as
     | React.RefObject<HTMLInputElement>
     | React.RefObject<HTMLButtonElement>;
@@ -31,11 +30,16 @@ export const useTagPickerList_unstable = (
     components: {
       root: Listbox,
     },
-    root: useListboxSlot(props, useMergedRefs(popoverRef, ref), {
-      state: { multiselect },
-      triggerRef,
-      defaultProps: { id: popoverId },
-      // FIXME: This is a workaround for the fact that useListboxSlot is not properly typed
-    })!,
+    root: slot.always(
+      {
+        ...useListboxSlot(props, useMergedRefs(popoverRef, ref), {
+          state: { multiselect: true },
+          triggerRef,
+          defaultProps: { id: popoverId },
+        }),
+        role: 'listbox',
+      },
+      { elementType: Listbox },
+    ),
   };
 };

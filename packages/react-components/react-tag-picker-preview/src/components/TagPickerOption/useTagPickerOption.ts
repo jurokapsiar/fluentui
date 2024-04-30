@@ -29,7 +29,12 @@ export const useTagPickerOption_unstable = (
     secondaryContent: slot.optional(props.secondaryContent, {
       elementType: 'span',
     }),
-    root: optionState.root,
+    root: slot.always(
+      { ...optionState.root, role: 'option', 'aria-checked': props['aria-checked'] },
+      {
+        elementType: 'div',
+      },
+    ),
   };
 
   return state;

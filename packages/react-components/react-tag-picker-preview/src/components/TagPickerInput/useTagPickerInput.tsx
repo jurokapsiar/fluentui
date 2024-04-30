@@ -9,10 +9,11 @@ import {
   useEventCallback,
   useIsomorphicLayoutEffect,
 } from '@fluentui/react-utilities';
-import { Backspace, Enter } from '@fluentui/keyboard-keys';
+import { ArrowLeft, Backspace, Enter, Space } from '@fluentui/keyboard-keys';
 import { useInputTriggerSlot } from '@fluentui/react-combobox';
 import { useFieldControlProps_unstable } from '@fluentui/react-field';
 import { tagPickerInputCSSRules } from '../../utils/tokens';
+import { useFocusFinders } from '@fluentui/react-tabster';
 
 /**
  * Create the state required to render TagPickerInput.
@@ -32,6 +33,7 @@ export const useTagPickerInput_unstable = (
   const size = useTagPickerContext_unstable(ctx => ctx.size);
   const freeform = useTagPickerContext_unstable(ctx => ctx.freeform);
   const contextDisabled = useTagPickerContext_unstable(ctx => ctx.disabled);
+  const tagPickerGroupRef = useTagPickerContext_unstable(ctx => ctx.tagPickerGroupRef);
   const {
     triggerRef,
     clearSelection,
@@ -42,7 +44,6 @@ export const useTagPickerInput_unstable = (
     setHasFocus,
     setOpen,
     setValue,
-    multiselect,
     popoverId,
     value: contextValue,
   } = useTagPickerContexts();
@@ -57,9 +58,7 @@ export const useTagPickerInput_unstable = (
   useIsomorphicLayoutEffect(() => {
     if (triggerRef.current) {
       const input = triggerRef.current;
-      const cb = () => {
-        setTagPickerInputStretchStyle(input);
-      };
+      const cb = () => setTagPickerInputStretchStyle(input);
       input.addEventListener('input', cb);
       return () => {
         input.removeEventListener('input', cb);
@@ -68,6 +67,7 @@ export const useTagPickerInput_unstable = (
   }, [triggerRef]);
 
   const { value = contextValue, disabled = contextDisabled } = props;
+  const { findLastFocusable } = useFocusFinders();
 
   const root = useInputTriggerSlot(
     {
@@ -78,6 +78,14 @@ export const useTagPickerInput_unstable = (
       ...getIntrinsicElementProps('input', props),
       onKeyDown: useEventCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
         props.onKeyDown?.(event);
+        if (event.key === ArrowLeft && event.currentTarget.selectionStart === 0 && tagPickerGroupRef.current) {
+          findLastFocusable(tagPickerGroupRef.current)?.focus();
+          return;
+        }
+        if (event.key === Space && open) {
+          setOpen(event, false);
+          return;
+        }
         if (event.key === Enter) {
           if (open) {
             ReactDOM.unstable_batchedUpdates(() => {
@@ -87,8 +95,8 @@ export const useTagPickerInput_unstable = (
           } else {
             setOpen(event, true);
           }
+          return;
         }
-
         if (event.key === Backspace && value?.length === 0 && selectedOptions.length) {
           const toDismiss = selectedOptions[selectedOptions.length - 1];
           selectOption(event, {
@@ -98,6 +106,7 @@ export const useTagPickerInput_unstable = (
             id: 'ERROR_DO_NOT_USE',
             text: 'ERROR_DO_NOT_USE',
           });
+          return;
         }
       }),
     },
@@ -114,7 +123,7 @@ export const useTagPickerInput_unstable = (
         setHasFocus,
         setOpen,
         setValue,
-        multiselect,
+        multiselect: true,
         value: props.value,
       },
     },
@@ -143,7 +152,6 @@ function useTagPickerContexts() {
     setHasFocus: useTagPickerContext_unstable(ctx => ctx.setHasFocus),
     setOpen: useTagPickerContext_unstable(ctx => ctx.setOpen),
     setValue: useTagPickerContext_unstable(ctx => ctx.setValue),
-    multiselect: useTagPickerContext_unstable(ctx => ctx.multiselect),
     value: useTagPickerContext_unstable(ctx => ctx.value),
     popoverId: useTagPickerContext_unstable(ctx => ctx.popoverId),
   };
